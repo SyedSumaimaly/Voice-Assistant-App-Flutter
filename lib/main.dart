@@ -1,9 +1,16 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:voice_assistant_app/home_page.dart';
 import 'package:voice_assistant_app/pallete.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      DevicePreview(
+        enabled: true,
+        builder: (context) => MyApp(),
+      )
+      // const MyApp()
+  );
 }
 
 class MyApp extends StatelessWidget {

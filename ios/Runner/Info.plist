@@ -41,9 +41,14 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<key>NSSpeechRecognitionUsageDescription</key>
 	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<key>NSMicrophoneUsageDescription</key>
 	<true/>
+
+	<key>CFBundleDevelopmentRegion</key>
+    	<string>$(DEVELOPMENT_LANGUAGE)</string>
+    	<key>CFBundleDisplayName</key>
+    	<string>Voice Assistant App</string>
 </dict>
 </plist>
