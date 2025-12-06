@@ -1,1 +1,1 @@
-const openAPIKey = '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';
+const openAPIKey = '';
