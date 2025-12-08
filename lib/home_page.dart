@@ -4,7 +4,7 @@ import 'package:speech_to_text/speech_recognition_result.dart' show SpeechRecogn
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voice_assistant_app/feature_box.dart';
 import 'package:voice_assistant_app/pallete.dart';
-
+// import 'package:flutter/foundation.dart';
 import 'openai_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,6 +26,12 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     initSpeechToText();
+    initTextToSpeexh();
+  }
+
+  Future<void> initTextToSpeexh() async{
+    await flutterTts.setSharedInstance(true);
+    setState(() {});
   }
 
   Future <void> initSpeechToText() async{
@@ -48,11 +54,17 @@ class _HomePageState extends State<HomePage> {
       lastWords = result.recognizedWords;
     });
   }
+  
+  Future<void> systemSpeak(String content) async{
+    await flutterTts.speak(content);
+    
+  }
 
   @override
   void dispose() {
     super.dispose();
     speechToText.stop();
+    flutterTts.stop();
   }
 
   @override
@@ -166,11 +178,11 @@ class _HomePageState extends State<HomePage> {
             // await openAIService.isArtPromptAPI(lastWords);
             await startListening();
           }else if(speechToText.isListening){
-            final speech = await openAIService.isArtPromptAPI(lastWords);
-            print(speech);
+            final speech = await openAIService.geminiChatAPI(lastWords);
+            await systemSpeak(speech);
             await stopListening();
           }else{
-            initSpeechToText();
+             await initSpeechToText();
           }
         },
         child: const Icon(Icons.mic),
