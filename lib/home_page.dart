@@ -20,6 +20,8 @@ class _HomePageState extends State<HomePage> {
   String lastWords = '';
   final OpenAIService openAIService = OpenAIService();
   final  flutterTts = FlutterTts();
+  String? generatedContent;
+  String? generatedImageUrl;
 
   @override
   void initState() {
@@ -119,53 +121,59 @@ class _HomePageState extends State<HomePage> {
                 )
               ),
         
-              child: const Padding(
-                padding:  EdgeInsets.symmetric(vertical: 10.0),
-                child:  Text('Good Morning, what task can I do for you?',
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child:  Text( generatedContent == null ? 'Good Morning, what task can I do for you?': generatedContent!,
                 style: TextStyle(
                   color: Pallete.mainFontColor,
-                  fontSize: 25,
+                  fontSize: generatedContent == null ? 25 : 18,
                   fontFamily: 'Cera Pro',
                 ),
                 ),
               )
             ),
-        
-          Container(
-            padding: const EdgeInsets.all(10),
-            margin: const EdgeInsets.only(
-              top: 10,
-              left: 22,
-            ),
-            alignment: Alignment.centerLeft,
-            child: const Text('Here are few features:',
-            style: TextStyle(
-              fontFamily: 'Cera Pro',
-              color: Pallete.mainFontColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+     if(generatedImageUrl != null) Image.network(generatedImageUrl!),
+          Visibility(
+            visible: generatedContent ==  null,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.only(
+                top: 10,
+                left: 22,
+              ),
+              alignment: Alignment.centerLeft,
+              child: const Text('Here are few features:',
+              style: TextStyle(
+                fontFamily: 'Cera Pro',
+                color: Pallete.mainFontColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              ),
             ),
           ),
           //   Features  List
-          Column(
-            children: [
-              FeatureBox(color: Pallete.firstSuggestionBoxColor,
-              headerText: 'Chat GPT',
-              descriptionText: 'A smarter way to stay organized and informed with Chat GPT',
-              ),
-        
-              FeatureBox(color: Pallete.secondSuggestionBoxColor,
-                headerText: 'Dall-E',
-                descriptionText: 'Get inspired and stay creative with your personal assistant powered by Dall-E',
-              ),
-        
-              FeatureBox(color: Pallete.thirdSuggestionBoxColor,
-                headerText: 'Smart Voice Assitant',
-                descriptionText: 'Get the best of both worlds with a voice assistant powered by Dall-E and Chat GPT',
-              )
-        
-            ],
+          Visibility(
+            visible: generatedContent == null,
+            child: Column(
+              children: [
+                FeatureBox(color: Pallete.firstSuggestionBoxColor,
+                headerText: 'Chat GPT',
+                descriptionText: 'A smarter way to stay organized and informed with Chat GPT',
+                ),
+
+                FeatureBox(color: Pallete.secondSuggestionBoxColor,
+                  headerText: 'Dall-E',
+                  descriptionText: 'Get inspired and stay creative with your personal assistant powered by Dall-E',
+                ),
+
+                FeatureBox(color: Pallete.thirdSuggestionBoxColor,
+                  headerText: 'Smart Voice Assitant',
+                  descriptionText: 'Get the best of both worlds with a voice assistant powered by Dall-E and Chat GPT',
+                )
+
+              ],
+            ),
           )
           ],
         ),
@@ -179,7 +187,18 @@ class _HomePageState extends State<HomePage> {
             await startListening();
           }else if(speechToText.isListening){
             final speech = await openAIService.geminiChatAPI(lastWords);
-            await systemSpeak(speech);
+            if(speech.contains('https')){
+              generatedImageUrl = speech;
+              generatedContent = null;
+              setState(() {
+
+              });
+            } else {
+              generatedImageUrl = null;
+              generatedContent = speech;
+              setState(() {});
+              await systemSpeak(speech);
+            }
             await stopListening();
           }else{
              await initSpeechToText();
